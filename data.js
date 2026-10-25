@@ -24,7 +24,6 @@ window.MATCHS=[
 8 Adrien
 9 Renaud
 11 Maxime
-12 Christian`}
- },
+12 Christian`}}
 
 ];

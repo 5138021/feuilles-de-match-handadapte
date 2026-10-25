@@ -125,7 +125,7 @@ window.MATCHS=[
 15 Amal
 16 Cédric
 17 Maeva`}},
- {id:"J10007",competition:"Championnat Hand'Adapté",division:"Poule B",journee:1,date:"2026-10-24",heure:"15:30",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
+ {id:"J10007",competition:"Championnat Hand'Adapté",division:".",journee:1,date:"2026-10-24",heure:"15:30",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
   domicile:{nom:"Meylan Handball",score:4,joueurs:`3 Gwennael
 4 Yoan
 5 Guillaume
@@ -146,7 +146,7 @@ window.MATCHS=[
 10 Océane
 11 Zehra
 13 Mael`}},
- {id:"J10008",competition:"Championnat Hand'Adapté",division:"Poule B",journee:1,date:"2026-10-24",heure:"15:50",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
+ {id:"J10008",competition:"Championnat Hand'Adapté",division:".",journee:1,date:"2026-10-24",heure:"15:50",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
   domicile:{nom:"Bollène 1",score:8,joueurs:`3 Antonin
 4 Florian
 7 Corentin
@@ -164,7 +164,7 @@ window.MATCHS=[
 10 Nadia
 11 Nicolas
 19 Lilian`}},
- {id:"J10009",competition:"Championnat Hand'Adapté",division:"Poule B",journee:1,date:"2026-10-24",heure:"16:10",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
+ {id:"J10009",competition:"Championnat Hand'Adapté",division:".",journee:1,date:"2026-10-24",heure:"16:10",gymnase:"Gymnase de Saint-Donat-Sur-l'Herbasse",ville:"Saint-Donat-Sur-l'Herbasse",
   domicile:{nom:"Handball Club Donatien 2",score:3,joueurs:`6 Suzanne
 7 Florian
 10 Jonathan

@@ -1,0 +1,131 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ajouter une feuille de match — Hand'Adapté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="site.css?v=3">
+<style>
+textarea{width:100%;min-height:150px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font:14px/1.6 'JetBrains Mono',monospace;padding:9px 11px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--cyan);background:rgba(74,159,255,.08)}
+textarea::placeholder{color:rgba(138,155,190,.6)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.act,.ghost{font:900 15px var(--fh);letter-spacing:1.5px;text-transform:uppercase;border-radius:10px;padding:12px 18px;cursor:pointer;border:0}
+.act{background:linear-gradient(135deg,var(--green),#00a066);color:var(--blue)}
+.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.mini{font:700 11px var(--fh);letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:7px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);cursor:pointer}
+.err{color:#ff6b7a;font-size:13px;margin:8px 0;line-height:1.5}
+.okk{color:var(--green);font-size:13px;margin:8px 0;font-weight:600}
+.li{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;flex-wrap:wrap}
+.li span{flex:1;min-width:200px}.li b{font-family:var(--fm);color:var(--gold);font-size:12px}
+ol{padding-left:22px;line-height:1.8;font-size:14px;margin-bottom:12px}
+ol li{display:list-item;padding:0;border:0;font-size:14px}
+ol li b{font:700 14px 'Barlow',sans-serif;color:#fff}
+#pdfs b{font:700 13px var(--fm);color:var(--gold)}
+.hint{font-size:12px;color:var(--muted);margin:2px 0 8px}
+</style></head><body>
+<header><a class="logo" href="index.html">🤾 Hand'Adapté</a><div class="sub">Ajouter une feuille de match</div></header>
+<main>
+<a class="back" href="index.html">‹ Tous les matchs</a>
+<div class="card"><div class="title cyan" id="ft">Nouveau match</div>
+ <div class="g">
+  <div><label for="f-id">N° de rencontre</label><input id="f-id" placeholder="HA-A-004" autocomplete="off"></div>
+  <div><label for="f-comp">Compétition</label><input id="f-comp" list="dl-competition" autocomplete="off"></div>
+  <div><label for="f-div">Poule / phase</label><input id="f-div" list="dl-division" placeholder="Poule A" autocomplete="off"></div>
+  <div><label for="f-jour">Journée</label><input id="f-jour" type="number" min="1" inputmode="numeric"></div>
+ </div>
+ <div class="g">
+  <div><label for="f-date">Date</label><input id="f-date" type="date"></div>
+  <div><label for="f-heure">Heure</label><input id="f-heure" type="time"></div>
+  <div><label for="f-gym">Gymnase</label><input id="f-gym" list="dl-gymnase" autocomplete="off"></div>
+  <div><label for="f-ville">Ville</label><input id="f-ville" list="dl-ville" autocomplete="off"></div>
+ </div></div>
+<div id="eqs"></div>
+<div class="err" id="err" role="alert"></div><div class="okk" id="ok" role="status"></div>
+<div class="row" style="margin-bottom:18px"><button class="act" id="bAdd">Ajouter à la liste</button><button class="ghost" id="bCancel" hidden>Annuler la modification</button></div>
+
+<div class="card"><div class="title gold" style="color:var(--gold)">Matchs de la liste (<span id="nb">0</span>)</div><div id="liste"></div></div>
+
+<div class="card"><div class="title cyan">Publier sur le site</div>
+ <ol><li>Cliquez sur <b>Télécharger data.js</b>.</li><li>Remplacez le fichier <b>data.js</b> du dossier du site par celui téléchargé.</li><li>Déposez le PDF de chaque nouveau match dans le dossier <b>feuilles</b> : <span id="pdfs"></span></li></ol>
+ <div class="row"><button class="act" id="bDl">Télécharger data.js</button><button class="ghost" id="bCp">Copier le contenu</button><button class="ghost" id="bRz">Annuler mes ajouts</button></div></div>
+<div id="dl"></div>
+</main>
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const q=JSON.stringify;
+const HEADER=`/* Fichier généré par ajouter.html (modifiable aussi à la main).
+   EQUIPES : une couleur par équipe.
+   MATCHS  : un bloc par match. Joueurs : un par ligne, « numéro prénom ».
+   Le PDF d'un match doit s'appeler feuilles/<id>.pdf. Les données ci-dessous sont des exemples fictifs. */
+`;
+const eqb=t=>`{nom:${q(t.nom)},score:${t.score},joueurs:\`${t.joueurs}\`}`;
+const bloc=m=>` {id:${q(m.id)},competition:${q(m.competition)},division:${q(m.division)},journee:${m.journee},date:${q(m.date)},heure:${q(m.heure)},gymnase:${q(m.gymnase)},ville:${q(m.ville)},\n  domicile:${eqb(m.domicile)},\n  exterieur:${eqb(m.exterieur)}}`;
+function toDataJs(eq,ms){
+ const used=new Set(ms.flatMap(m=>[m.domicile.nom,m.exterieur.nom]));
+ const lines=Object.entries(eq).filter(([n])=>used.has(n)).map(([n,c])=>` ${q(n)}:${q(c)}`);
+ const sorted=[...ms].sort((a,b)=>(a.date+a.heure).localeCompare(b.date+b.heure));
+ return HEADER+'window.EQUIPES={\n'+lines.join(',\n')+'\n};\n\nwindow.MATCHS=[\n'+sorted.map(bloc).join(',\n')+'\n];\n';
+}
+const BASE=JSON.stringify([window.EQUIPES||{},window.MATCHS||[]]),KEY='hand-adapte-brouillon';
+let EQ={...(window.EQUIPES||{})},LIST=JSON.parse(JSON.stringify(window.MATCHS||[])),NEW=new Set(),EDIT=null;
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.base===BASE){EQ=s.eq;LIST=s.list;NEW=new Set(s.neuf)}}catch(x){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({base:BASE,eq:EQ,list:LIST,neuf:[...NEW]}))}catch(x){}};
+const lignes=s=>String(s||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+function lireJoueurs(s){const ok=[],bad=[],dup=[],seen={};
+ lignes(s).forEach(l=>{const m=l.match(/^(\d{1,3})\s+(.+)$/);if(!m){bad.push(l);return}
+  const nom=m[2].replace(/[`\\]|\$\{/g,'').trim();if(seen[m[1]]){dup.push(m[1]);return}seen[m[1]]=1;ok.push(m[1]+' '+nom)});
+ return {ok,bad,dup}}
+const bloc2=(k,t)=>`<div class="card"><div class="title" style="color:${k==='d'?'#ff6b7a':'var(--cyan)'}">${t}</div>
+<div class="g"><div><label for="${k}-nom">Équipe</label><input id="${k}-nom" list="dl-eq" autocomplete="off"></div>
+<div><label for="${k}-col">Couleur</label><input id="${k}-col" type="color" value="${k==='d'?'#E02D37':'#4A9FFF'}" style="height:38px;padding:3px"></div>
+<div><label for="${k}-sc">Score final</label><input id="${k}-sc" type="number" min="0" inputmode="numeric"></div></div>
+<label for="${k}-jo">Joueurs</label><div class="hint">Un joueur par ligne : le numéro, un espace, puis le prénom.</div>
+<textarea id="${k}-jo" placeholder="1 Karim&#10;3 Léa&#10;7 Maya"></textarea></div>`;
+$('#eqs').innerHTML=bloc2('d','Équipe qui reçoit (domicile)')+bloc2('x','Équipe visiteuse (extérieur)')+'<div id="dls"></div>';
+function listes(){const u=k=>[...new Set(LIST.map(m=>m[k]))].map(v=>`<option value="${e(v)}">`).join('');
+ $('#dls').innerHTML=['competition','division','gymnase','ville'].map(k=>`<datalist id="dl-${k}">${u(k)}</datalist>`).join('')+`<datalist id="dl-eq">${Object.keys(EQ).map(v=>`<option value="${e(v)}">`).join('')}</datalist>`}
+function dernier(nom){const l=[...LIST].filter(m=>m.domicile.nom===nom||m.exterieur.nom===nom).sort((a,b)=>b.date.localeCompare(a.date))[0];
+ return l?(l.domicile.nom===nom?l.domicile:l.exterieur).joueurs:''}
+['d','x'].forEach(k=>$('#'+k+'-nom').addEventListener('change',()=>{const n=$('#'+k+'-nom').value.trim();
+ if(EQ[n])$('#'+k+'-col').value=EQ[n];if(!$('#'+k+'-jo').value.trim())$('#'+k+'-jo').value=dernier(n)}));
+function rendu(){listes();$('#nb').textContent=LIST.length;
+ $('#liste').innerHTML=[...LIST].sort((a,b)=>(b.date+b.heure).localeCompare(a.date+a.heure)).map(m=>`<div class="li"><span><b>${e(m.id)}</b> ${e(m.domicile.nom)} ${m.domicile.score} - ${m.exterieur.score} ${e(m.exterieur.nom)} · ${e(m.date)}</span>
+ <button class="mini" data-m="${e(m.id)}">Modifier</button><button class="mini" data-s="${e(m.id)}">Supprimer</button></div>`).join('')||'<p class="empty">Aucun match pour le moment.</p>';
+ $('#pdfs').innerHTML=NEW.size?[...NEW].map(i=>`<b>${e(i)}.pdf</b>`).join(', '):'<i>aucun nouveau match pour le moment</i>'}
+function charger(id){const m=LIST.find(x=>x.id===id);if(!m)return;EDIT=id;
+ const set=(k,v)=>$('#'+k).value=v;set('f-id',m.id);set('f-comp',m.competition);set('f-div',m.division);set('f-jour',m.journee);set('f-date',m.date);set('f-heure',m.heure);set('f-gym',m.gymnase);set('f-ville',m.ville);
+ [['d','domicile'],['x','exterieur']].forEach(([k,c])=>{set(k+'-nom',m[c].nom);set(k+'-col',EQ[m[c].nom]||'#8A9BBE');set(k+'-sc',m[c].score);set(k+'-jo',m[c].joueurs)});
+ $('#ft').textContent='Modifier '+id;$('#bAdd').textContent='Enregistrer les modifications';$('#bCancel').hidden=false;scrollTo({top:0,behavior:'smooth'})}
+function fin(){EDIT=null;$('#ft').textContent='Nouveau match';$('#bAdd').textContent='Ajouter à la liste';$('#bCancel').hidden=true;
+ ['f-id','d-nom','d-sc','d-jo','x-nom','x-sc','x-jo'].forEach(k=>$('#'+k).value='')}
+function ajouter(){
+ const v=k=>$('#'+k).value.trim(),err=[];$('#ok').textContent='';
+ const m={id:v('f-id'),competition:v('f-comp'),division:v('f-div'),journee:parseInt(v('f-jour')),date:v('f-date'),heure:v('f-heure'),gymnase:v('f-gym'),ville:v('f-ville')};
+ if(!/^[A-Za-z0-9_-]+$/.test(m.id))err.push('N° de rencontre : lettres, chiffres, - ou _ uniquement (ex. HA-A-004).');
+ else if(LIST.some(x=>x.id===m.id&&x.id!==EDIT))err.push('Ce n° de rencontre existe déjà.');
+ [['competition','Compétition'],['division','Poule / phase'],['date','Date'],['heure','Heure'],['gymnase','Gymnase'],['ville','Ville']].forEach(([k,n])=>{if(!m[k])err.push(n+' : à renseigner.')});
+ if(!(m.journee>=1))err.push('Journée : un nombre à partir de 1.');
+ const cols={};
+ [['d','domicile','Domicile'],['x','exterieur','Extérieur']].forEach(([k,c,n])=>{
+  const nom=v(k+'-nom'),sc=v(k+'-sc'),jo=lireJoueurs($('#'+k+'-jo').value);
+  if(!nom)err.push(n+' : nom de l\'équipe à renseigner.');
+  if(!/^\d+$/.test(sc))err.push(n+' : score final à renseigner.');
+  if(!jo.ok.length)err.push(n+' : ajoutez au moins un joueur.');
+  jo.bad.forEach(l=>err.push(`${n} : la ligne « ${l} » doit commencer par le numéro (ex. 7 Maya).`));
+  jo.dup.forEach(nu=>err.push(`${n} : le numéro ${nu} est en double.`));
+  m[c]={nom,score:+sc,joueurs:jo.ok.join('\n')};cols[nom]=$('#'+k+'-col').value});
+ if(m.domicile.nom&&m.domicile.nom===m.exterieur.nom)err.push('Les deux équipes ont le même nom.');
+ $('#err').innerHTML=err.map(x=>'<div>• '+e(x)+'</div>').join('');
+ if(err.length)return;
+ Object.assign(EQ,cols);
+ const i=LIST.findIndex(x=>x.id===EDIT);if(i>=0){LIST[i]=m;NEW.delete(EDIT);}else LIST.push(m);NEW.add(m.id);
+ const msg=(EDIT?'Modifications enregistrées pour ':'Match ajouté : ')+m.id+'.';fin();save();rendu();$('#ok').textContent=msg}
+$('#bAdd').onclick=ajouter;$('#bCancel').onclick=()=>{fin();$('#err').textContent=''};
+$('#liste').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;
+ if(b.dataset.m)charger(b.dataset.m);
+ if(b.dataset.s&&confirm('Supprimer le match '+b.dataset.s+' de la liste ?')){LIST=LIST.filter(x=>x.id!==b.dataset.s);NEW.delete(b.dataset.s);save();rendu()}};
+$('#bDl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([toDataJs(EQ,LIST)],{type:'text/javascript'}));a.download='data.js';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$('#bCp').onclick=async()=>{try{await navigator.clipboard.writeText(toDataJs(EQ,LIST));$('#ok').textContent='Contenu copié : collez-le dans data.js.'}catch(x){$('#err').textContent='Copie impossible : utilisez le bouton Télécharger.'}};
+$('#bRz').onclick=()=>{if(confirm('Annuler tous les ajouts et revenir au data.js actuel ?')){try{localStorage.removeItem(KEY)}catch(x){}location.reload()}};
+rendu();
+</script></body></html>

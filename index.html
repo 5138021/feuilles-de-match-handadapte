@@ -12,24 +12,27 @@
 </main>
 <script src="data.js"></script>
 <script>
-const $=s=>document.querySelector(s),L0=window.MATCHS||[];
+const $=s=>document.querySelector(s),L0=window.MATCHS||[],COLORS=window.EQUIPES||{};
 const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const home=m=>({...m.domicile,color:COLORS[m.domicile?.nom]||'#9A59B5'});
+const away=m=>({...m.exterieur,color:COLORS[m.exterieur?.nom]||'#16b8c8'});
+const scoreHome=m=>m.domicile?.score??'—',scoreAway=m=>m.exterieur?.score??'—';
 const fd=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 const opt=(f,a)=>'<option value="">'+f+'</option>'+a.map(x=>'<option>'+e(x)+'</option>').join('');
-$('#fc').innerHTML=opt('Toutes les compétitions',[...new Set(L0.map(m=>m.competition))]);
-$('#ft').innerHTML=opt('Toutes les équipes',[...new Set(L0.flatMap(m=>[m.home.nom,m.away.nom]))].sort((a,b)=>a.localeCompare(b,'fr')));
-const card=m=>`<a class="mcard" href="match.html?id=${encodeURIComponent(m.id)}">
-<div class="side"><i class="badge" style="--c:${e(m.home.color)}" aria-hidden="true"></i><b>${e(m.home.nom)}</b></div>
-<div class="sc">${m.scoreHome} - ${m.scoreAway}</div>
-<div class="side away"><i class="badge" style="--c:${e(m.away.color)}" aria-hidden="true"></i><b>${e(m.away.nom)}</b></div>
-<div class="mmeta">${[m.division,'Journée '+m.journee,m.heure.replace(':','h'),m.gymnase+', '+m.ville].map(e).join(' · ')}</div></a>`;
+$('#fc').innerHTML=opt('Toutes les compétitions',[...new Set(L0.map(m=>m.competition).filter(Boolean))]);
+$('#ft').innerHTML=opt('Toutes les équipes',[...new Set(L0.flatMap(m=>[home(m).nom,away(m).nom]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr')));
+const card=m=>{const H=home(m),A=away(m);return `<a class="mcard" href="match.html?id=${encodeURIComponent(m.id)}">
+<div class="side"><i class="badge" style="--c:${e(H.color)}" aria-hidden="true"></i><b>${e(H.nom)}</b></div>
+<div class="sc">${e(scoreHome(m))} - ${e(scoreAway(m))}</div>
+<div class="side away"><i class="badge" style="--c:${e(A.color)}" aria-hidden="true"></i><b>${e(A.nom)}</b></div>
+<div class="mmeta">${[m.division,'Journée '+m.journee,(m.heure||'').replace(':','h'),[m.gymnase,m.ville].filter(Boolean).join(', ')].filter(Boolean).map(e).join(' · ')}</div></a>`};
 function render(){
  const q=$('#q').value.trim().toLowerCase(),c=$('#fc').value,t=$('#ft').value,dir=$('#fo').value==='asc'?1:-1;
- const L=L0.filter(m=>(!c||m.competition===c)&&(!t||m.home.nom===t||m.away.nom===t)&&(!q||[m.home.nom,m.away.nom,m.gymnase,m.ville,m.division,m.id].join(' ').toLowerCase().includes(q)))
-  .sort((a,b)=>dir*(a.date+a.heure).localeCompare(b.date+b.heure));
+ const L=L0.filter(m=>{const H=home(m),A=away(m);return (!c||m.competition===c)&&(!t||H.nom===t||A.nom===t)&&(!q||[H.nom,A.nom,m.gymnase,m.ville,m.division,m.id].join(' ').toLowerCase().includes(q))})
+ .sort((a,b)=>dir*((a.date||'')+(a.heure||'')).localeCompare((b.date||'')+(b.heure||'')));
  $('#n').textContent=L.length+' feuille'+(L.length>1?'s':'')+' de match';
  let h='',last='';L.forEach(m=>{if(m.date!==last){last=m.date;h+='<h2 class="day">'+fd(last)+'</h2>'}h+=card(m)});
  $('#liste').innerHTML=h||'<p class="empty">Aucune feuille ne correspond. Modifiez votre recherche ou les filtres.</p>';
 }
-document.addEventListener('input',render);render();
+document.addEventListener('input',render);document.addEventListener('change',render);render();
 </script></body></html>

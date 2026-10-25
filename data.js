@@ -3,8 +3,10 @@
    MATCHS  : un bloc par match. Joueurs : un par ligne, « numéro prénom ».
    Le PDF d'un match doit s'appeler feuilles/<id>.pdf. Les données ci-dessous sont des exemples fictifs. */
 window.EQUIPES={
- "Handball Club Donatien 1":"#9A59B5",
- "Beaurepaire":"#E12D38"
+ "Hand'Adapté Grenoble":"#E02D37",
+ "Meylan Handi-Hand":"#4A9FFF",
+ "ESAT Handball Voiron":"#00C17A",
+ "Isère Sport Adapté":"#F5A623"
 };
 
 window.MATCHS=[
@@ -24,6 +26,54 @@ window.MATCHS=[
 8 Adrien
 9 Renaud
 11 Maxime
-12 Christian`}}
-
+12 Christian`}},
+ {id:"HA-A-001",competition:"Championnat Hand'Adapté",division:"Poule A",journee:1,date:"2026-10-10",heure:"14:00",gymnase:"Gymnase du Rondeau",ville:"Grenoble",
+  domicile:{nom:"Hand'Adapté Grenoble",score:18,joueurs:`1 Lucas
+4 Emma
+7 Hugo
+9 Inès
+11 Nathan`},
+  exterieur:{nom:"Meylan Handi-Hand",score:15,joueurs:`1 Karim
+3 Léa
+6 Tom
+10 Sarah
+12 Paul`}},
+ {id:"HA-A-002",competition:"Championnat Hand'Adapté",division:"Poule A",journee:1,date:"2026-10-10",heure:"16:00",gymnase:"Gymnase du Rondeau",ville:"Grenoble",
+  domicile:{nom:"ESAT Handball Voiron",score:12,joueurs:`2 Yanis
+5 Chloé
+7 Adam
+13 Noah`},
+  exterieur:{nom:"Isère Sport Adapté",score:12,joueurs:`3 Sofiane
+8 Malik
+10 Alice
+12 Rayan`}},
+ {id:"HA-C-001",competition:"Coupe Hand'Adapté",division:"Huitièmes",journee:1,date:"2026-10-17",heure:"15:00",gymnase:"Gymnase des Écoles",ville:"Voiron",
+  domicile:{nom:"Isère Sport Adapté",score:14,joueurs:`3 Sofiane
+5 Zoé
+8 Malik
+10 Alice
+14 Camille`},
+  exterieur:{nom:"Hand'Adapté Grenoble",score:16,joueurs:`1 Lucas
+4 Emma
+8 Samir
+9 Inès
+15 Lina`}},
+ {id:"HA-A-003",competition:"Championnat Hand'Adapté",division:"Poule A",journee:2,date:"2026-10-24",heure:"15:00",gymnase:"Gymnase des Tilleuls",ville:"Meylan",
+  domicile:{nom:"Meylan Handi-Hand",score:20,joueurs:`1 Karim
+3 Léa
+4 Théo
+6 Tom
+7 Maya
+9 Hugo
+10 Sarah
+11 Enzo
+14 Jade`},
+  exterieur:{nom:"ESAT Handball Voiron",score:17,joueurs:`1 Lucas
+2 Yanis
+5 Chloé
+8 Malik
+9 Inès
+12 Zoé
+13 Noah
+15 Emma`}}
 ];

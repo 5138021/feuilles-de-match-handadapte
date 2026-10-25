@@ -1,0 +1,40 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feuille de match — Hand'Adapté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="site.css?v=3"></head><body>
+<header><a class="logo" href="index.html">🤾 Hand'Adapté</a><div class="sub">Feuille de match</div></header>
+<main id="page"></main>
+<script src="data.js"></script>
+<script>
+const id=new URLSearchParams(location.search).get('id'),m=(window.MATCHS||[]).find(x=>x.id===id),P=document.getElementById('page');
+const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+if(!m){P.innerHTML='<a class="back" href="index.html">‹ Tous les matchs</a><p class="empty">Cette feuille de match n\'existe pas.</p>'}
+else{
+ const H=m.home,A=m.away,dt=new Date(m.date+'T12:00');
+ const dl=dt.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ document.title=H.nom+' '+m.scoreHome+' - '+m.scoreAway+' '+A.nom+' · Hand\'Adapté';
+ const side=(t,cls,tag)=>`<div class="tside ${cls}"><i class="badge" style="--c:${e(t.color)}" aria-hidden="true"></i><div><div class="tg">${tag}</div><div class="tname">${e(t.nom)}</div></div></div>`;
+ const list=(t,c)=>`<section class="card"><div class="title" style="color:${c}">${e(t.nom)}</div><ul>${t.joueurs.map(j=>'<li><b>'+e(j[0])+'</b>'+e(j[1])+'</li>').join('')}</ul></section>`;
+ P.innerHTML=`<a class="back" href="index.html">‹ Tous les matchs</a>
+ <div class="hdr">
+  <div class="hdr-top">
+   <div class="brand"><img src="images2.jfif" alt="Ligue AURA FFSA" onerror="this.remove()"><i></i><img src="logo-AURA-mobile.png" alt="Ligue AURA" onerror="this.remove()"></div>
+   <div class="titles"><div class="eyebrow">Feuille de match</div><h1 class="doc-title">${e(H.nom)} / ${e(A.nom)}</h1>
+    <div class="doc-comp">${[m.competition,m.division,'Journée '+m.journee].map(e).join(' — ')}</div></div>
+   <div class="ids"><div>Code Renc : <strong>${e(m.id)}</strong></div><div>Date : <strong>${e(dt.toLocaleDateString('fr-FR'))}</strong></div></div>
+  </div>
+  <div class="hero">
+   ${side(H,'','Club recevant')}
+   <div class="sblock"><div class="scores" aria-label="Score final : ${m.scoreHome} à ${m.scoreAway}">
+    <div class="sbox ${m.scoreHome>m.scoreAway?'win':''}" style="--c:${e(H.color)}">${m.scoreHome}</div><div class="ssep">:</div>
+    <div class="sbox ${m.scoreAway>m.scoreHome?'win':''}" style="--c:${e(A.color)}">${m.scoreAway}</div></div><div class="slabel">Score final</div></div>
+   ${side(A,'away','Club visiteur')}
+  </div>
+  <div class="band">
+   <div class="cell"><div class="ico">📅</div><div><div class="k">Date &amp; heure</div><div class="v">${e(dl.charAt(0).toUpperCase()+dl.slice(1))} à ${e(m.heure.replace(':','h'))}</div></div></div>
+   <div class="cell"><div class="ico">🏟️</div><div><div class="k">Gymnase</div><div class="v">${e(m.gymnase)}<small>${e(m.ville)}</small></div></div></div>
+  </div>
+ </div>
+ <div class="teams">${list(H,'#ff6b7a')}${list(A,'var(--cyan)')}</div>
+ <a class="pdf" href="${e(m.pdf)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 14h6M9 17h4"/></svg>Consulter la feuille de match (PDF)</a>`;
+}
+</script></body></html>

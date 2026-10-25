@@ -1,159 +1,35 @@
-
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Feuilles de match — Hand'Adapté</title>
-  <link rel="stylesheet" href="site.css?v=4">
-</head>
-<body>
-<header>
-  <a class="logo" href="index.html">🤾 Hand'Adapté</a>
-  <div class="sub">Feuilles de match</div>
-</header>
-
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feuilles de match — Hand'Adapté</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="site.css?v=3"></head><body>
+<header><a class="logo" href="index.html">🤾 Hand'Adapté</a><div class="sub">Feuilles de match</div></header>
 <main>
-  <div class="card">
-    <div class="title cyan">Rechercher une feuille</div>
-    <div class="filters">
-      <div class="full">
-        <label for="q">Équipe, gymnase, ville ou numéro</label>
-        <input id="q" type="search" placeholder="Ex : Beaurepaire">
-      </div>
-      <div>
-        <label for="fc">Compétition</label>
-        <select id="fc"></select>
-      </div>
-      <div>
-        <label for="ft">Équipe</label>
-        <select id="ft"></select>
-      </div>
-      <div class="full">
-        <label for="fo">Tri</label>
-        <select id="fo">
-          <option value="desc">Plus récentes d'abord</option>
-          <option value="asc">Plus anciennes d'abord</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="count" id="n"></div>
-  <div id="liste"></div>
+<div class="card"><div class="title cyan">Rechercher une feuille</div><div class="filters">
+<div class="full"><label for="q">Équipe, gymnase, ville ou n° de rencontre</label><input id="q" type="search" placeholder="Ex : Voiron, Tilleuls, HA-A-003"></div>
+<div><label for="fc">Compétition</label><select id="fc"></select></div>
+<div><label for="ft">Équipe</label><select id="ft"></select></div>
+<div class="full"><label for="fo">Tri</label><select id="fo"><option value="desc">Plus récentes d'abord</option><option value="asc">Plus anciennes d'abord</option></select></div>
+</div></div>
+<div class="count" id="n" aria-live="polite"></div><div id="liste"></div>
 </main>
-
 <script src="data.js"></script>
 <script>
-const $ = s => document.querySelector(s);
-const matchs = window.MATCHS || [];
-const equipes = window.EQUIPES || {};
-
-const e = s => String(s ?? '').replace(/[&<>"]/g, c => ({
-  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'
-}[c]));
-
-const fd = d => new Date(d + 'T12:00:00').toLocaleDateString(
-  'fr-FR',
-  {weekday:'long', day:'numeric', month:'long', year:'numeric'}
-);
-
-const nom = t => t?.nom || '';
-const couleur = t => t?.color || equipes[nom(t)] || '#8A9BBE';
-
-$('#fc').innerHTML =
-  '<option value="">Toutes les compétitions</option>' +
-  [...new Set(matchs.map(m => m.competition).filter(Boolean))]
-    .map(x => `<option value="${e(x)}">${e(x)}</option>`).join('');
-
-const listeEquipes = [...new Set(matchs.flatMap(m => [
-  nom(m.domicile || m.home),
-  nom(m.exterieur || m.away)
-]).filter(Boolean))].sort((a,b) => a.localeCompare(b,'fr'));
-
-$('#ft').innerHTML =
-  '<option value="">Toutes les équipes</option>' +
-  listeEquipes.map(x => `<option value="${e(x)}">${e(x)}</option>`).join('');
-
-function card(m) {
-  const h = m.domicile || m.home;
-  const a = m.exterieur || m.away;
-  const sh = h?.score ?? m.scoreHome ?? 0;
-  const sa = a?.score ?? m.scoreAway ?? 0;
-
-  return `
-    <a class="mcard" href="match.html?id=${encodeURIComponent(m.id)}">
-      <div class="side">
-        <i class="badge" style="--c:${e(couleur(h))}"></i>
-        <b>${e(nom(h))}</b>
-      </div>
-      <div class="sc">${e(sh)} - ${e(sa)}</div>
-      <div class="side away">
-        <i class="badge" style="--c:${e(couleur(a))}"></i>
-        <b>${e(nom(a))}</b>
-      </div>
-      <div class="mmeta">
-        ${[m.division, m.journee ? 'Journée '+m.journee : '',
-          m.heure ? m.heure.replace(':','h') : '',
-          [m.gymnase,m.ville].filter(Boolean).join(', ')]
-          .filter(Boolean).map(e).join(' · ')}
-      </div>
-    </a>`;
+const $=s=>document.querySelector(s),L0=window.MATCHS||[];
+const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fd=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const opt=(f,a)=>'<option value="">'+f+'</option>'+a.map(x=>'<option>'+e(x)+'</option>').join('');
+$('#fc').innerHTML=opt('Toutes les compétitions',[...new Set(L0.map(m=>m.competition))]);
+$('#ft').innerHTML=opt('Toutes les équipes',[...new Set(L0.flatMap(m=>[m.home.nom,m.away.nom]))].sort((a,b)=>a.localeCompare(b,'fr')));
+const card=m=>`<a class="mcard" href="match.html?id=${encodeURIComponent(m.id)}">
+<div class="side"><i class="badge" style="--c:${e(m.home.color)}" aria-hidden="true"></i><b>${e(m.home.nom)}</b></div>
+<div class="sc">${m.scoreHome} - ${m.scoreAway}</div>
+<div class="side away"><i class="badge" style="--c:${e(m.away.color)}" aria-hidden="true"></i><b>${e(m.away.nom)}</b></div>
+<div class="mmeta">${[m.division,'Journée '+m.journee,m.heure.replace(':','h'),m.gymnase+', '+m.ville].map(e).join(' · ')}</div></a>`;
+function render(){
+ const q=$('#q').value.trim().toLowerCase(),c=$('#fc').value,t=$('#ft').value,dir=$('#fo').value==='asc'?1:-1;
+ const L=L0.filter(m=>(!c||m.competition===c)&&(!t||m.home.nom===t||m.away.nom===t)&&(!q||[m.home.nom,m.away.nom,m.gymnase,m.ville,m.division,m.id].join(' ').toLowerCase().includes(q)))
+  .sort((a,b)=>dir*(a.date+a.heure).localeCompare(b.date+b.heure));
+ $('#n').textContent=L.length+' feuille'+(L.length>1?'s':'')+' de match';
+ let h='',last='';L.forEach(m=>{if(m.date!==last){last=m.date;h+='<h2 class="day">'+fd(last)+'</h2>'}h+=card(m)});
+ $('#liste').innerHTML=h||'<p class="empty">Aucune feuille ne correspond. Modifiez votre recherche ou les filtres.</p>';
 }
-
-function render() {
-  const q = $('#q').value.trim().toLowerCase();
-  const c = $('#fc').value;
-  const t = $('#ft').value;
-  const dir = $('#fo').value === 'asc' ? 1 : -1;
-
-  const resultats = matchs.filter(m => {
-    const h = m.domicile || m.home;
-    const a = m.exterieur || m.away;
-    const texte = [
-      nom(h), nom(a), m.gymnase, m.ville,
-      m.division, m.competition, m.id
-    ].join(' ').toLowerCase();
-
-    return (!c || m.competition === c) &&
-      (!t || nom(h) === t || nom(a) === t) &&
-      (!q || texte.includes(q));
-  }).sort((a,b) =>
-    dir * ((a.date || '') + (a.heure || ''))
-      .localeCompare((b.date || '') + (b.heure || ''))
-  );
-
-  $('#n').textContent =
-    resultats.length + ' feuille' +
-    (resultats.length > 1 ? 's' : '') + ' de match';
-
-  let html = '';
-  let derniereDate = '';
-
-  resultats.forEach(m => {
-    if (m.date && m.date !== derniereDate) {
-      derniereDate = m.date;
-      html += `<h2 class="day">${fd(m.date)}</h2>`;
-    }
-    html += card(m);
-  });
-
-  $('#liste').innerHTML = html ||
-    '<p class="empty">Aucun match trouvé.</p>';
-}
-
-['input','change'].forEach(evt =>
-  document.addEventListener(evt, event => {
-    if (event.target.matches('#q,#fc,#ft,#fo')) render();
-  })
-);
-
-if (!Array.isArray(window.MATCHS)) {
-  $('#liste').innerHTML =
-    '<p class="empty">Erreur : les données des matchs ne sont pas chargées.</p>';
-} else {
-  render();
-}
-</script>
-</body>
-</html>
+document.addEventListener('input',render);render();
+</script></body></html>
